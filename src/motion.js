@@ -3,13 +3,20 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
+export function scrollToElement(target) {
+  if (!target) return
+  gsap.to(window, { scrollTo: { y: target, offsetY: 60 }, duration: 1.3, ease: 'power4.inOut', overwrite: 'auto' })
+}
+
 export function initMotion() {
   const mm = gsap.matchMedia()
-  mm.add('(prefers-reduced-motion: no-preference)', () => {
-    const cleanups = []
-    const st = (trigger, extra = {}) => ({ trigger, start: 'top bottom', end: 'bottom top', scrub: 0.8, ...extra })
+  
 
-    /* ---------- Page transition + hero timeline ---------- */
+  mm.add('all', () => {
+    const cleanups = []
+    const st = (trigger, extra = {}) => ({ trigger, start: 'top bottom', end: 'bottom top', scrub: 0.8, invalidateOnRefresh: true, ...extra })
+
+    /* ---------- Transição da página feito por rhuan + hero timeline ---------- */
     document.body.style.overflow = 'hidden'
     gsap.set('.hero .lead,.hero .scroll,.hero .eyebrow', { willChange: 'transform,opacity' })
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, onComplete: () => { document.body.style.overflow = '' } })
@@ -70,7 +77,7 @@ export function initMotion() {
     reveal('.three > div, .tags span, .duo .card', { y: 60 })
     reveal('.checks li, .steps li', { y: 0, x: -40 })
     reveal('.q', { y: 30 })
-    reveal('.cta .store, footer .ft > *, .fb')
+    reveal('.cta .store, .cta-art, .profile-card, .footer-main > *, .footer-bottom > *')
     reveal('.peach-card', { scale: 0.94 })
     reveal('.food .fd', { scale: 0.4, y: 20 })
 
@@ -82,7 +89,7 @@ export function initMotion() {
     gsap.to('.ring', { rotate: 180, ease: 'none', scrollTrigger: st('.s6') })
     gsap.fromTo('.equip:not(.sm)', { scale: 0.8, rotate: -6 }, { scale: 1, rotate: 0, ease: 'none', scrollTrigger: { trigger: '.s6', start: 'top 80%', end: 'center center', scrub: 0.8 } })
     gsap.fromTo('.orange-box', { scale: 0.9 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.s3', start: 'top 80%', end: 'center center', scrub: 0.8 } })
-    gsap.fromTo('.s7 .prof', { yPercent: 18 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.s7', start: 'top 85%', end: 'center 60%', scrub: 0.8 } })
+    gsap.fromTo('.profile-card', { rotate: 1.5 }, { rotate: 0, ease: 'none', scrollTrigger: { trigger: '.s7', start: 'top 85%', end: 'center 60%', scrub: 0.8 } })
     gsap.fromTo('.cta h2', { backgroundPositionX: '0%' }, { backgroundPositionX: '100%', ease: 'none', scrollTrigger: st('.cta') })
 
     /* ---------- Microinterações: botões magnéticos ---------- */
@@ -100,13 +107,12 @@ export function initMotion() {
       const a = e.target.closest('a[href^="#"]'); if (!a) return
       const t = document.querySelector(a.getAttribute('href')); if (!t) return
       e.preventDefault()
-      gsap.to(window, { scrollTo: { y: t, offsetY: 60 }, duration: 1.3, ease: 'power4.inOut' })
+      scrollToElement(t)
     }
     document.addEventListener('click', onClick)
     cleanups.push(() => document.removeEventListener('click', onClick))
 
     return () => { cleanups.forEach((c) => c()); document.body.style.overflow = '' }
   })
-  mm.add('(prefers-reduced-motion: reduce)', () => { document.querySelector('.curtain')?.remove() })
   return () => mm.revert()
 }

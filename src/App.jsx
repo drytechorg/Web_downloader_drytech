@@ -1,5 +1,5 @@
 import { useState, useLayoutEffect, useEffect } from 'react'
-import { initMotion } from './motion.js'
+import { initMotion, scrollToElement } from './motion.js'
 import { images } from './images.js'
 import logo from './assets/logo.png'
 /* Imagens: coloque os arquivos em src/assets e troque os <Img/> abaixo (ver README) */
@@ -14,7 +14,7 @@ const Logo = ({ big }) => (
   <img src={logo} alt="Drytech Group" className={`logo-img ${big ? 'big' : ''}`} />
 )
 const Store = () => (
-  <a className="store" href="#download"><span className="ico"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M5 3.5v17L19 12 5 3.5z" /></svg></span><span><small>Download para</small><b>Android</b></span><i>&#8599;</i></a>
+  <a className="store" href="#download"><span className="ico"><svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><g fill="#3ddc84"><path d="M8.1 10.3a8.1 8.1 0 0 1 15.8 0H8.1Z"/><rect x="6.5" y="11.4" width="19" height="10.2" rx="2.2"/><rect x="3.5" y="12" width="2.7" height="9" rx="1.35"/><rect x="25.8" y="12" width="2.7" height="9" rx="1.35"/><rect x="10" y="20" width="4" height="8" rx="2"/><rect x="18" y="20" width="4" height="8" rx="2"/></g><g stroke="#3ddc84" stroke-linecap="round" stroke-width="1.8"><path d="m10 3.8 2.3 3.5M22 3.8l-2.3 3.5"/></g><g fill="#fff"><circle cx="12" cy="9" r=".8"/><circle cx="20" cy="9" r=".8"/></g></svg></span><span><small>Download para</small><b>Android</b></span><i>&#8599;</i></a>
 )
 const Eyebrow = ({ children, dot }) => <p className="eyebrow">{dot && <span className="dot" />}{children}</p>
 
@@ -78,7 +78,7 @@ const ScrollCue = () => {
     const marker = window.innerHeight * 0.55
     const current = sections.findIndex(section => section.getBoundingClientRect().bottom > marker)
     const target = atEnd ? sections[0] : sections[Math.min(current + 1, sections.length - 1)]
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    scrollToElement(target)
   }
 
   return <button className={`scroll-cue ${atEnd ? 'is-last' : ''}`} onClick={move} aria-label={atEnd ? 'Voltar ao início' : 'Ir para a próxima seção'} title={atEnd ? 'Voltar ao início' : 'Próxima seção'}>
@@ -97,7 +97,7 @@ export default function App() {
   const [open, setOpen] = useState(0)
   useLayoutEffect(() => initMotion(), [])
   return (<>
-    <div className="progress" /><div className="curtain"><img src={logo} alt="" /></div>
+    <div className="progress" /><div className="curtain" role="status" aria-label="Carregando Drytech"><img src={logo} alt="Drytech Group" /><span>TECNOLOGIA QUE PRESERVA O SABOR</span></div>
     <header className="nav"><Logo />
       <nav><a href="#app">O aplicativo</a><a href="#como">Como funciona</a><a href="#alimentos">Alimentos</a><a href="#duvidas">Dúvidas</a></nav>
       <a className="btn" href="#download">Baixar o app <i>↗</i></a></header>
@@ -180,12 +180,12 @@ export default function App() {
         <p className="lead w">Mais clareza para acompanhar. Mais praticidade para configurar. Seus alimentos e secagens, no mesmo app.</p>
         <div className="stores"><Store /></div>
         <p className="tiny w">Disponibilidade e link oficial da loja para Android a confirmar.</p></div>
-            <div className="cta-art"><span className="cta-orbit orbit-one" /><span className="cta-orbit orbit-two" /><span className="cta-mark">D<span>.</span></span><p>TECNOLOGIA<br />QUE PRESERVA<br />O SABOR</p><small>DRYTECH GROUP &middot; 2026</small></div>
+            <div className="cta-art"><p>TECNOLOGIA<br />QUE PRESERVA<br />O SABOR</p></div>
     </div></section>
 
     <footer className="site-footer"><div className="wrap">
       <div className="footer-main">
-        <div className="footer-brand"><a className="footer-wordmark" href="#top" aria-label="Drytech Group, voltar ao in&iacute;cio"><b>D</b>RYTECH<small>GROUP</small></a><p>Mais sabor, sa&uacute;de e praticidade.<br />Tecnologia que preserva o sabor.</p></div>
+        <div className="footer-brand"><a className="footer-logo" href="#top" aria-label="Drytech Group, voltar ao in&iacute;cio"><img src={logo} alt="Drytech Group" /></a><p>Mais sabor, sa&uacute;de e praticidade.<br />Tecnologia que preserva o sabor.</p></div>
         <div className="footer-col"><span className="footer-label">NAVEGUE</span><nav><a href="#app">O aplicativo</a><a href="#como">Como funciona</a><a href="#alimentos">Alimentos</a><a href="#duvidas">D&uacute;vidas</a></nav></div>
         <div className="footer-col footer-availability"><span className="footer-label">APLICATIVO</span><p>Dispon&iacute;vel para Android</p><a href="#download">Ver informa&ccedil;&otilde;es de acesso <i>&#8599;</i></a></div>
       </div>
